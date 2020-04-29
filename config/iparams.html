@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Print App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://static.freshdev.io/fdk/2.0/assets/freshdesk.css" />
+    <script src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+        </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<style>
+    /* Common Component */
+    html {
+        font-size: 100%;
+    }
+
+    .pageContainer {
+        max-width: 75%;
+        margin: auto;
+        padding: 0;
+        border-radius: 10px;
+        margin-top: 1rem;
+    }
+
+    .pageHead {
+        background-color: #cdf;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .head-text {
+        display: inline-block;
+        margin: 2px 0 0;
+        font-weight: bold;
+        color: gray;
+        font-size: 1.4rem;
+    }
+
+    #back {
+        border: none;
+        padding: 3px 12px;
+    }
+
+    .save {
+        margin: 1rem;
+    }
+
+    .msg {
+        max-width: 75%;
+        margin: auto;
+        text-align: center;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .success {
+        border: 1px solid #02b875;
+        background: #06d68a;
+    }
+
+    .fail {
+        background: #ff9c9c;
+        border: 1px solid #f75959;
+    }
+
+    .error {
+        display: none;
+    }
+
+    /* Common Component Ends */
+
+    /* Cred page */
+    #credForm {
+        margin: 1rem;
+    }
+
+    #verify {
+        min-width: 9rem;
+        text-align: center;
+    }
+
+    .formInput {
+        margin: 1rem 0;
+    }
+
+    /* Cred Page Ends*/
+</style>
+
+<body>
+    <div class="msg"></div>
+
+    <!--Start of login page -->
+    <div id="credPage" class="pageContainer">
+        <div id="credForm">
+            <div class="fserv-form">
+                <div class="fserv-field fserv-required">
+                    <label class="fserv-label">API key</label><input class="fserv-input-text" id="apiKey" name="apiKey"
+                        data-secret="false" type="text">
+                    <div class="fserv-control"></div>
+                    <label class="fserv-hint">Please enter the API key</label>
+                </div>
+                <div class="fserv-field fserv-required">
+                    <label class="fserv-label">Domain</label><input class="fserv-input-text" id="domain" name="domain"
+                        data-secret="false" type="text">
+                    <div class="fserv-control"></div>
+                    <label class="fserv-hint">Please enter domain like
+                        domainname.subdomain.com</label>
+                </div>
+                <div class="fserv-field fserv-required">
+                    <button id="verify" type="button" class="btn btn-primary">Verify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of login page -->
+    <!-- Home  page  -->
+    <div id="homePage" class="pageContainer">
+        <form>
+            <div class="form-group">
+                <label for="WindowDuration">Window Duration</label>
+                <input type="number" min="0" class="form-control" id="WindowDuration">
+                <p id='windowerr' class="error" style='color:red;'>Please Enter the Minutes in Round Value. </p>
+                <small id="emailHelp" class="form-text text-muted">The window duration (in minutes) within which similar
+                    tickets will be merged.</small>
+            </div>
+            <!-- exclude Email -->
+            <div class="form-group">
+                <label for="excludeEmail">Exclude Emails</label>
+                <input type="email" class="form-control" id="excludeEmail">
+                <p id='excludeEmailerr' class="error" style='color:red;'>Please Enter Valid Emails.</p>
+                <small id="emailHelp" class="form-text text-muted">Comma separated emails whose tickets will never be
+                    merged. Takes precedence over 'include'
+                </small>
+            </div>
+            <!-- include Email -->
+            <div class="form-group">
+                <label for="includeEmail">Include Emails</label>
+                <input type="email" class="form-control" id="includeEmail">
+                <p id='includeEmailerr' class="error" style='color:red;'>Please Enter Valid Emails.</p>
+                <small id="emailHelp" class="form-text text-muted">Comma separated emails whose tickets will always be
+                    merged (regardless of time).
+                    .</small>
+            </div>
+
+            <!-- include domain -->
+            <div class="form-group">
+                <label for="includedDomain">Include Domains</label>
+                <input type="domain" class="form-control" id="includedDomain">
+                <p id='includedDomainerr' class="error" style='color:red;'>Please Enter Valid Domains.</p>
+                <small id="domainHelp" class="form-text text-muted">Comma separated domains whose tickets will always be
+                    merged (regardless of time). e.g(@yourdomain.com)
+                </small>
+            </div>
+            <!-- exclude domain -->
+            <div class="form-group">
+                <label for="excludeDomain">Exclude Domains</label>
+                <input type="domain" class="form-control" id="excludeDomain">
+                <p id='excludeDomainerr' class="error" style='color:red;'>Please Enter Valid Domains.</p>
+                <small id="domainHelp" class="form-text text-muted">Comma separated domains whose tickets will never be
+                    merged. Takes precedence over 'include'. e.g(@yourdomain.com)
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="mergeYes">Merge Tickets from all Portals
+                </label>
+                <!-- Group of default radios - option 1 -->
+                <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="mergeYes" name="merge_ticket" value="Yes">
+                    <label class="custom-control-label" for="mergeYes">Yes</label>
+                </div>
+
+                <!-- Group of default radios - option 2 -->
+                <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="mergeNo" name="merge_ticket" value="No">
+                    <label class="custom-control-label" for="mergeNo">No</label>
+                </div>
+                <small id="emailHelp" class="form-text text-muted">To merge tickets for different product portals or
+                    not</small>
+            </div>
+        </form>
+
+
+    </div>
+    <!-- End of Home page -->
+</body>
+
+<script>
+    let apiKey = '',
+        domain = '',
+        merge_ticket = 'Yes',
+        windowDuration = $("#WindowDuration").val(),
+        include_domain, exclude_domain,
+        include_email, exclude_email,
+        validation = false;
+    $("#WindowDuration").val(0);
+
+    function getConfigs(savedConfigs) {
+        apiKey = savedConfigs.apiKey;
+        domain = savedConfigs.domain;
+        windowDuration = savedConfigs.window;
+        include_domain = savedConfigs.include_domain;
+        exclude_domain = savedConfigs.exclude_domain;
+        include_email = savedConfigs.include;
+        exclude_email = savedConfigs.exclude;
+        merge_ticket = savedConfigs.merge_ticket;
+        $("#apiKey").val(apiKey);
+        $("#domain").val(domain);
+        $("#includedDomain").val(include_domain);
+        $("#excludeDomain").val(exclude_domain);
+        $("#includeEmail").val(include_email);
+        $("#excludeEmail").val(exclude_email);
+        $("#WindowDuration").val(windowDuration);
+
+        app();
+    }
+    function validateEmail(email, id) {
+        var reg = /(\s?)+\w+(([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+([;.](([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+)*(\s?)+/;
+        if (email === "") {
+            $(`#${id}`).removeClass('fail');
+            $(`#${id}err`).hide();
+            validation = true;
+            return true;
+        } else if (reg.test(email) == false) {
+            $(`#${id}`).addClass('fail');
+            $(`#${id}err`).show();
+            validation = false;
+            return false;
+        } else {
+            $(`#${id}`).removeClass('fail');
+            $(`#${id}err`).hide();
+            validation = true;
+            return true
+        }
+    }
+
+    $("#excludeEmail, #includeEmail").on('change', function (e) {
+        var emailList = $(`#${e.target.id}`).val();
+        include_email = $(`#includeEmail`).val();
+        exclude_email = $(`#excludeEmail`).val();
+        var emailArr = emailList.split(',');
+        emailArr.every(email => {
+            return validateEmail(email, e.target.id);
+        });
+    });
+    function validatedomain(domain, id) {
+        var reg = /^@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        if (domain === "") {
+            $(`#${id}`).removeClass('fail');
+            $(`#${id}err`).hide();
+            validation = true;
+            return true;
+        } else if (reg.test(domain) == false) {
+            $(`#${id}`).addClass('fail');
+            $(`#${id}err`).show();
+            validation = false;
+            return false;
+        } else {
+            $(`#${id}`).removeClass('fail');
+            $(`#${id}err`).hide();
+            validation = true;
+            return true
+        }
+    }
+
+    $("#excludeDomain, #includedDomain").on('change', function (e) {
+        var domainList = $(`#${e.target.id}`).val();
+        include_domain = $(`#includedDomain`).val();
+        exclude_domain = $(`#excludeDomain`).val();
+        var domainArr = domainList.split(',');
+        domainArr.every(domain => {
+            return validatedomain(domain, e.target.id);
+        });
+    });
+    $("input[name='merge_ticket']").on('click', function () {
+        merge_ticket = $("input[name='merge_ticket']:checked").val();
+    });
+    jQuery('#WindowDuration').change(function () {
+        windowDuration = $("#WindowDuration").val()
+    });
+    $("#WindowDuration").keypress(function (e) {
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            $("#windowerr").show();
+            $('#WindowDuration').val('');
+            return false;
+        }else{
+            $("#windowerr").hide();
+        }
+    });
+    $('#WindowDuration').bind("paste", function (e) {
+        e.preventDefault();
+    });
+    let mergerApp = {
+        init: function () {
+            this.callApi({
+                url: '/api/v2/companies',
+                method: 'get'
+            }).then(function (companyData) {
+                mergerApp.message('Validation Successful', 'success')
+                mergerApp.showPage('homePage');
+                if (merge_ticket === 'Yes') {
+                    $("#mergeYes").prop("checked", true);
+                } else {
+                    $("#mergeNo").prop("checked", true);
+                }
+                validation = true;
+            }).catch(e => {
+                if (domain == '' || apiKey == '') {
+                    mergerApp.message('Please enter the API key and Domain name', 'fail');
+                } else {
+                    mergerApp.message('Wrong API key or Domain name', 'fail');
+                }
+                $('#verify').attr("disabled", false);
+            })
+        },
+
+        message: function (msg, className) {
+            $(".msg").addClass(className).html(msg).slideDown('slow').delay(3000).slideUp('slow', function () {
+                $('.msg').removeClass(className)
+            })
+        },
+        showPage: function (key) {
+            $('.pageContainer').hide();
+            $('#' + key).show();
+        },
+        callApi: function (options) {
+            return new Promise((resolve, reject) => {
+                var url = 'https://' + domain + options.url;
+                $.ajax({
+                    url: url,
+                    type: options.method,
+                    dataType: "json",
+                    headers: {
+                        "Authorization": "Basic " + btoa(apiKey + ':x'),
+                    },
+                    success: function (data) {
+                        resolve(data)
+                    },
+                    error: function (k) {
+                        reject({
+                            error: "error"
+                        })
+                    }
+                });
+            });
+        }
+    }
+
+    function app() {
+        mergerApp.showPage('credPage')
+        $(document).on("click", "#back", function () {
+            mergerApp.showPage('homePage')
+        });
+        $("#verify").unbind('click');
+        $("#verify").click(function () {
+            $('#verify').attr("disabled", true);
+            apiKey = $("#apiKey").val()
+            domain = $("#domain").val()
+            mergerApp.init();
+        });
+    }
+    app()
+
+    function validate() {
+        return validation;
+    }
+
+    function postConfigs() {
+        const data = {
+            _meta: {
+                secure: ["apiKey"]
+            },
+            apiKey,
+            domain,
+            "window": windowDuration,
+            "include": include_email,
+            "exclude": exclude_email,
+            include_domain,
+            exclude_domain,
+            "merge_ticket": merge_ticket
+        }
+        console.log("window",window);
+        console.log("include",include_email);
+        console.log("exclude",exclude_email);
+        console.log("includedomain",include_domain);
+        console.log("excludedomain",exclude_domain);
+        return data;
+        
+
+    }
+    
+</script>
+
+</html>
